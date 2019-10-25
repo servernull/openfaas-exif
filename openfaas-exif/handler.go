@@ -47,7 +47,7 @@ func Handle(req []byte) string {
 			return string(output)
 		}
 	} else {
-		filePath := "temp." + filepath.Ext(reqString)
+		filePath := os.TempDir() + "/temp." + filepath.Ext(reqString)
 		if err := downloadFile(filePath, reqString); err != nil {
 			response := struct {
 				Error   string
