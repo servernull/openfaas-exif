@@ -4,9 +4,8 @@ An [openfaas](https://www.openfaas.com) function that takes a base64 encoded ima
 
 ```bash
 
-### build & deploy
+### deploy
 faas-cli deploy -f stack.yml
-
 
 ### invoke
 go run encode.go image.jpg | faas-cli invoke openfaas-exif | jq
