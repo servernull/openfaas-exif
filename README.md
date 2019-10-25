@@ -8,7 +8,7 @@ An [openfaas](https://www.openfaas.com) function that takes an URL or a base64 e
 faas-cli deploy -f stack.yml
 
 ### invoke by url 
-echo -n https://github.com/dsoprea/go-exif/raw/master/assets/gps.jpg | faas-cli invoke openfaas-exif | jq
+echo https://github.com/dsoprea/go-exif/raw/master/assets/gps.jpg | faas-cli invoke openfaas-exif | jq
 
 ### invoke by base64 encoded image
 cat image.jpg | base64 | faas-cli invoke openfaas-exif | jq
