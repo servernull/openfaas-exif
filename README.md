@@ -1,6 +1,6 @@
 # openfaas-exif
 
-An [openfaas](https://www.openfaas.com) function that takes a base64 encoded image or URL, and returns EXIF information.
+An [openfaas](https://www.openfaas.com) function that takes an URL or a base64 encoded image and returns EXIF information.
 
 ```bash
 
