@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/dsoprea/go-exif"
 )
@@ -31,7 +32,7 @@ type IfdEntry struct {
 func Handle(req []byte) string {
 
 	var data []byte
-	reqString := string(req)
+	reqString := strings.Trim(string(req), " \n")
 
 	if _, err := url.ParseRequestURI(reqString); err != nil {
 		data, err = base64.StdEncoding.DecodeString(reqString)
