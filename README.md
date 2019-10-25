@@ -8,7 +8,7 @@ An [openfaas](https://www.openfaas.com) function that takes a base64 encoded ima
 faas-cli deploy -f stack.yml
 
 ### invoke
-go run encode.go image.jpg | faas-cli invoke openfaas-exif | jq
+cat image.jpg | base64 | faas-cli invoke openfaas-exif | jq
 
 [
   {
