@@ -1,13 +1,16 @@
 # openfaas-exif
 
-An [openfaas](https://www.openfaas.com) function that takes a base64 encoded image, and returns EXIF information.
+An [openfaas](https://www.openfaas.com) function that takes a base64 encoded image or URL, and returns EXIF information.
 
 ```bash
 
 ### deploy
 faas-cli deploy -f stack.yml
 
-### invoke
+### invoke by url 
+echo https://github.com/dsoprea/go-exif/raw/master/assets/gps.jpg | faas-cli invoke openfaas-exif | jq
+
+### invoke by base64 encoded image
 cat image.jpg | base64 | faas-cli invoke openfaas-exif | jq
 
 [

@@ -4,6 +4,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 
 	"github.com/dsoprea/go-exif"
 )
@@ -24,17 +30,49 @@ type IfdEntry struct {
 // Handle a serverless request
 func Handle(req []byte) string {
 
-	data, err := base64.StdEncoding.DecodeString(string(req))
-	if err != nil {
-		response := struct {
-			Error   string
-			Message string
-		}{
-			"error decoding image",
-			err.Error(),
+	var data []byte
+	reqString := string(req)
+
+	if _, err := url.ParseRequestURI(reqString); err != nil {
+		data, err = base64.StdEncoding.DecodeString(reqString)
+		if err != nil {
+			response := struct {
+				Error   string
+				Message string
+			}{
+				"error decoding image",
+				err.Error(),
+			}
+			output, _ := json.Marshal(response)
+			return string(output)
 		}
-		output, _ := json.Marshal(response)
-		return string(output)
+	} else {
+		filePath := "temp." + filepath.Ext(reqString)
+		if err := downloadFile(filePath, reqString); err != nil {
+			response := struct {
+				Error   string
+				Message string
+			}{
+				"error downloading image",
+				err.Error(),
+			}
+			output, _ := json.Marshal(response)
+			return string(output)
+		}
+
+		if data, err = ioutil.ReadFile(filePath); err != nil {
+			response := struct {
+				Error   string
+				Message string
+			}{
+				"error reading image",
+				err.Error(),
+			}
+			output, _ := json.Marshal(response)
+			return string(output)
+		}
+		defer os.Remove(filePath)
+
 	}
 
 	exifEntries := []map[string]string{}
@@ -118,4 +156,25 @@ func Handle(req []byte) string {
 
 	output, _ := json.Marshal(exifEntries)
 	return string(output)
+}
+
+func downloadFile(filepath string, url string) error {
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
