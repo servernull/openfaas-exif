@@ -37,38 +37,38 @@ func Handle(req []byte) string {
 	if _, err := url.ParseRequestURI(reqString); err != nil {
 		data, err = base64.StdEncoding.DecodeString(reqString)
 		if err != nil {
-			response := struct {
+			response := []struct {
 				Error   string
 				Message string
-			}{
+			}{{
 				"error decoding image",
 				err.Error(),
-			}
+			}}
 			output, _ := json.Marshal(response)
 			return string(output)
 		}
 	} else {
 		filePath := os.TempDir() + "/temp." + filepath.Ext(reqString)
 		if err := downloadFile(filePath, reqString); err != nil {
-			response := struct {
+			response := []struct {
 				Error   string
 				Message string
-			}{
+			}{{
 				"error downloading image",
 				err.Error(),
-			}
+			}}
 			output, _ := json.Marshal(response)
 			return string(output)
 		}
 
 		if data, err = ioutil.ReadFile(filePath); err != nil {
-			response := struct {
+			response := []struct {
 				Error   string
 				Message string
-			}{
+			}{{
 				"error reading image",
 				err.Error(),
-			}
+			}}
 			output, _ := json.Marshal(response)
 			return string(output)
 		}
@@ -78,11 +78,11 @@ func Handle(req []byte) string {
 
 	exifEntries := []map[string]string{}
 	if rawExif, err := exif.SearchAndExtractExif(data); err != nil {
-		response := struct {
+		response := []struct {
 			Error string
-		}{
+		}{{
 			"no EXIF found in image",
-		}
+		}}
 		output, _ := json.Marshal(response)
 		return string(output)
 	} else {
